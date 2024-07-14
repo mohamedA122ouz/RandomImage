@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>choose random question</title>
+    <script>
+        let controlAlert = localStorage.controlAlert;
+        if (!controlAlert) {
+
+            alert(`Controlls:
+            ➡: get new image and save old one if exist to the solved images
+            delete: get the next image without save to solved images
+            c: show the current image it is useful if you are in favorites and wanna get back to randomly choosed image
+            f : shows the favorite images
+            shift + f: saves the current image into favorite
+            shift + d: delete the favorite image from favorites
+            `);
+            localStorage.controlAlert = true;
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <img src="" alt="choosed question by pressing right arrow ➡ or c for last image"
+        style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
+    <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
+    <script>
+        const takenAlready = { length: 0, insert: function (...data) { for (let i of data) { this.length++; this[i] = true; } }, retake: function (qNum) { this.length--; delete this[qNum]; } };
+        const favor = {
+            items: [],
+            pointer: -1, next: function () {
+                if (this.pointer === -1) { getFavoirte(); }
+                if (this.pointer < this.items.length)
+                    return this.items[++this.pointer];
+                else {
+                    alert("nothing Previous");
+                    return this.items[this.items.length - 1]
+                }
+            },
+            previous: function () {
+                if (this.pointer > 0)
+                    return this.items[--this.pointer];
+                else {
+                    alert("nothing Previous");
+                    return this.items[0];
+                }
+            }
+            , loopNavigation: function () {
+                if (this.pointer === -1) { getFavoirte(); }
+                this.pointer = (this.pointer + 1) % this.items.length
+                return this.items[this.pointer];
+            }
+        };
+        getFunction();
+        const itemLength = 65;
+        function randomQ() {
+            return Promise.resolve().then(() => {
+                let num = parseInt(Math.random() * 538640390 % itemLength);
+                while (num in takenAlready) {
+                    num = parseInt(Math.random() * 538640390 % itemLength);
+                    if (takenAlready.length === itemLength - 1) {
+                        for (let i = 0; i < takenAlready.length; i++) {
+                            if (i in takenAlready) { continue; }
+                            takenAlready.insert(i);
+                            return i;
+                        }
+                    } else if (takenAlready.length === itemLength) {
+                        alert("congrates you finished go to solve a real exam");
+                        return 0;
+                    }
+                }
+                takenAlready.insert(num);
+                return num;
+            }).then(result => { console.log(result); return result; });
+        }
+        let img = document.querySelector("img");
+        let retakeQuestionNum = -1;
+        function saveToStorage() {
+            let arr = [];
+            for (let i in takenAlready) {
+                if (!isNaN(i))
+                    arr.push(parseInt(i));
+            }
+            localStorage.setItem("finishedQ", JSON.stringify(arr));
+        }
+        function getFunction() {
+            try {
+                let arr = JSON.parse(localStorage.getItem("finishedQ"));
+                if (arr.length) {
+                    arr.forEach(element => {
+                        takenAlready.insert(element);
+                    });
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        /**
+         * @param {number} favorite
+         */
+        function saveFavorite(favorite) {
+            try {
+                /**
+                * @type {Array}
+                */
+                let current = JSON.parse(localStorage.getItem("favorite"));
+                current.push(favorite);
+                current = new Set(current);
+                localStorage.setItem("favorite", JSON.stringify([...current]));
+            } catch {
+                let current = [favorite];
+                localStorage.setItem("favorite", JSON.stringify(current));
+            }
+            getFavoirte();
+        }
+
+        function getFavoirte() {
+            try {
+                let current = JSON.parse(localStorage.getItem("favorite"));
+                favor.items = current;
+            } catch {
+                alert("favorite is empty");
+            }
+        }
+        let num;
+        document.addEventListener("keydown", async (e) => {
+            // console.log(e.code);
+            if (e.code === "ArrowRight") {
+                saveToStorage();
+                num = await randomQ();
+                retakeQuestionNum = num;
+                img.src = "./image-" + num + ".png";
+            }
+            else if (e.code === "Delete") {
+                num = await randomQ();
+                takenAlready.retake(retakeQuestionNum);
+                img.src = "./image-" + num + ".png";
+                retakeQuestionNum = num;
+            }
+            else if (e.code === "KeyC") {
+                if (localStorage.lastImage)
+                    num = localStorage.lastImage;
+                if (!isNaN(num)) {
+                    img.src = "./image-" + num + ".png";
+                    retakeQuestionNum = num;
+                }
+                else {
+                    alert("no current or last image");
+                }
+
+            }
+            else if (e.shiftKey && e.code === "KeyF") {
+                saveFavorite(num);
+            }
+            else if (e.shiftKey && e.code === "KeyD") {
+                let i = new Set(favor.items);
+                i.delete(favor.items[favor.pointer]);
+                favor.items = [...i];
+                try {
+                    localStorage.setItem("favorite", JSON.stringify([...i]));
+                } catch { }
+
+            }
+            else if (e.code === "KeyF") {
+                let i = favor.loopNavigation();
+                if (i >= 0)
+                    img.src = "./image-" + i + ".png";
+                document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
+                return;
+            }
+            if (!isNaN(num)) {
+                document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | image#${num}`;
+                localStorage.lastImage = num;
+            }
+        });
+    </script>
+</body>
+
+</html>
