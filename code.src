@@ -17,6 +17,7 @@
             shift + f: saves the current image into favorite
             shift + d: delete the favorite image from favorites
             ALT + t : to reset the program
+            shift + ?: shows the image name
             `);
             localStorage.controlAlert = true;
         }
@@ -174,6 +175,9 @@
             }
             else if(e.code === "KeyT" && e.altKey){
                 localStorage.clear();
+            }
+            else if(e.code === "Slash" && e.shiftKey){
+                alert("imageName is: "+images[num]);
             }
             if (!isNaN(num)) {
                 document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | image#${num}`;
