@@ -31,7 +31,7 @@
         style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
     <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
     <script>
-        const images = 0x11;
+        const images = ["./images/Screenshot 2024-06-12 004527.png","./images/dir1/Screenshot 2024-07-15 134717.png","./images/dir1/Screenshot 2024-07-15 135502.png","./images/dir1/Screenshot 2024-07-15 135733.png","./images/dir1/Screenshot 2024-07-15 135832.png","./images/dir1/Screenshot 2024-07-15 135842.png","./images/dir1/Screenshot 2024-07-15 140056.png","./images/dir1/Screenshot 2024-07-15 140533.png","./images/dir1/Screenshot 2024-07-15 145808.png","./images/dir2/Screenshot 2024-06-12 004535.png"];
         const takenAlready = { length: 0, insert: function (...data) { for (let i of data) { this.length++; this[i] = true; } }, retake: function (qNum) { this.length--; delete this[qNum]; } };
         const favor = {
             items: [],

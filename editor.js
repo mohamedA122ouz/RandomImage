@@ -9,6 +9,19 @@ const images = dirData.map((el) => {
     else
         return "";
 }).filter((el)=>el);
+const folders = dirData.map((el) => {
+    if ((!el.includes(".png") || el.includes(".jpg") || el.includes(".jpeg") || el.includes(".tiff") || el.includes(".gif")))
+        return `./images/${el}`;
+    else
+        return "";
+}).filter((el)=>el);
+console.log(folders);
+folders.forEach(folder=>{
+    fs.readdirSync(folder).forEach((el)=>{
+        if (el.includes(".png") || el.includes(".jpg") || el.includes(".jpeg") || el.includes(".tiff") || el.includes(".gif"))
+            images.push(`${folder}/${el}`);
+    });
+})
 if(images.length !== 0){
     console.log(images);
     mysource = mysource.replace("0x11", JSON.stringify(images));
