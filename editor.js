@@ -10,7 +10,7 @@ const images = dirData.map((el) => {
         return "";
 }).filter((el)=>el);
 const folders = dirData.map((el) => {
-    if ((!el.includes(".png") || el.includes(".jpg") || el.includes(".jpeg") || el.includes(".tiff") || el.includes(".gif")))
+    if (!(el.includes(".png") || el.includes(".jpg") || el.includes(".jpeg") || el.includes(".tiff") || el.includes(".gif")))
         return `./images/${el}`;
     else
         return "";
