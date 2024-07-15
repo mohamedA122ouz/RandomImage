@@ -16,6 +16,7 @@
             f : shows the favorite images
             shift + f: saves the current image into favorite
             shift + d: delete the favorite image from favorites
+            ALT + t : to reset the program
             `);
             localStorage.controlAlert = true;
         }
@@ -79,6 +80,7 @@
             }).then(result => { console.log(result); return result; });
         }
         let img = document.querySelector("img");
+        img.alt = img.alt + ` __NOTICE: you solved ${takenAlready.length} question so you have ${images.length - takenAlready.length} question ready to be solved from total ${images.length} question`
         let retakeQuestionNum = -1;
         function saveToStorage() {
             let arr = [];
