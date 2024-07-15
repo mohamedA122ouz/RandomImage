@@ -169,14 +169,14 @@
                 let i = favor.loopNavigation();
                 if (i >= 0)
                     img.src = images[num];
-                document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | img_path:${images[favor.items[favor.pointer]]}`;
+                document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | img_path:${images[favor.items[favor.pointer]].split('/')[2]}`;
                 return;
             }
             else if(e.code === "KeyT" && e.altKey){
                 localStorage.clear();
             }
             if (!isNaN(num)) {
-                document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | img_path:${images[num]}`;
+                document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | img_path:${images[num].split('/')[2]}`;
                 localStorage.lastImage = num;
             }
         });
