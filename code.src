@@ -17,7 +17,6 @@
             shift + f: saves the current image into favorite
             shift + d: delete the favorite image from favorites
             ALT + t : to reset the program
-            shift + ?: shows the image path
             `);
             localStorage.controlAlert = true;
         }
@@ -170,17 +169,14 @@
                 let i = favor.loopNavigation();
                 if (i >= 0)
                     img.src = images[num];
-                document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
+                document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | img_path:${images[favor.items[favor.pointer]]}`;
                 return;
             }
             else if(e.code === "KeyT" && e.altKey){
                 localStorage.clear();
             }
-            else if(e.code === "Slash" && e.shiftKey){
-                alert("image path is: "+images[num]);
-            }
             if (!isNaN(num)) {
-                document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | image#${num}`;
+                document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | img_path:${images[num]}`;
                 localStorage.lastImage = num;
             }
         });
