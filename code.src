@@ -169,7 +169,7 @@
             else if (e.code === "KeyF") {
                 let i = favor.loopNavigation();
                 if (i >= 0)
-                    img.src = images[num];
+                    img.src = images[i];
                 document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
                 return;
             }
