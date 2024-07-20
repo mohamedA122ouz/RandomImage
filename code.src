@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>choose random question</title>
     <script>
-        let controlAlert = localStorage.controlAlert;
-        if (!controlAlert) {
-
-            alert(`Controlls:
+        let alertTxt = `Controlls:
             ➡: get new image and save old one if exist to the solved images
             delete: get the next image without save to solved images
             c: show the current image it is useful if you are in favorites and wanna get back to randomly choosed image
@@ -18,7 +15,14 @@
             shift + d: delete the favorite image from favorites
             ALT + t : to reset the program
             shift + ?: shows the image path
-            `);
+            shift + 1:to show alert
+            shift + s:to save into harddesk
+            shift + r:to restore the old data and refresh this migh be bad if you didn't save last session
+            `
+        let controlAlert = localStorage.controlAlert;
+        if (!controlAlert) {
+
+            alert(alertTxt);
             localStorage.controlAlert = true;
         }
 
@@ -31,6 +35,47 @@
         style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
     <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
     <script>
+        function restoreData() {
+            return fetch("http://localhost:8080/")
+                .then((res) => {
+                    if (res.status === 200) {
+                        return res.json(); // Returns a Promise
+                    }
+                    throw new Error("Response status is not 200 OK");
+                })
+                .then((data) => {
+                    // Now 'data' contains the parsed JSON
+                    data = JSON.parse(data);
+                    for (let i in data) {
+                        localStorage.setItem(i, data[i]);
+                    }
+                    alert("data restored successfully")
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error.message);
+                });
+        }
+        function saveData() {
+            return fetch("http://localhost:8080/", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...localStorage,
+                }),
+            })
+                .then((res) => {
+                    if (res.status === 200) {
+                        alert("Saved successfully");
+                    } else {
+                        alert("Not saved for some reason");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error during fetch:", error.message);
+                });
+        }
         const images = 0x11;
         const takenAlready = { length: 0, insert: function (...data) { for (let i of data) { this.length++; this[i] = true; } }, retake: function (qNum) { this.length--; delete this[qNum]; } };
         const favor = {
@@ -173,19 +218,33 @@
                 document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
                 return;
             }
-            else if(e.code === "KeyT" && e.altKey){
+            else if (e.code === "KeyT" && e.altKey) {
                 localStorage.clear();
                 location.reload();
             }
-            else if(e.code === "Slash" && e.shiftKey){
-                alert("image path is: "+images[num]);
+            else if (e.code === "Slash" && e.shiftKey) {
+                alert("image path is: " + images[num]);
+            } else if (e.code === "KeyS" && e.shiftKey) {
+                saveData();
+            }
+            else if (e.code === "KeyR" && e.shiftKey) {
+                restoreData().then(() => {
+                    location.reload();
+                });
+            }
+            else if (e.code === "Digit1" && e.shiftKey) {
+                alert(alertTxt);
             }
             if (!isNaN(num)) {
                 document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | image#${num}`;
                 localStorage.lastImage = num;
-                
             }
         });
+        window.addEventListener("beforeunload",async(ev)=>{
+            ev.preventDefault();
+            await saveData();
+            window.close();
+        })
     </script>
 </body>
 

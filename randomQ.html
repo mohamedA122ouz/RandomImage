@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>choose random question</title>
     <script>
-        let controlAlert = localStorage.controlAlert;
-        if (!controlAlert) {
-
-            alert(`Controlls:
+        let alertTxt = `Controlls:
             ➡: get new image and save old one if exist to the solved images
             delete: get the next image without save to solved images
             c: show the current image it is useful if you are in favorites and wanna get back to randomly choosed image
@@ -18,7 +15,14 @@
             shift + d: delete the favorite image from favorites
             ALT + t : to reset the program
             shift + ?: shows the image path
-            `);
+            shift + 1:to show alert
+            shift + s:to save into harddesk
+            shift + r:to restore the old data and refresh this migh be bad if you didn't save last session
+            `
+        let controlAlert = localStorage.controlAlert;
+        if (!controlAlert) {
+
+            alert(alertTxt);
             localStorage.controlAlert = true;
         }
 
@@ -31,7 +35,48 @@
         style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
     <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
     <script>
-        const images = ["./images/Screenshot 2024-06-12 004527.png","./images/dir1/Screenshot 2024-07-15 134717.png","./images/dir1/Screenshot 2024-07-15 135502.png","./images/dir1/Screenshot 2024-07-15 135733.png","./images/dir1/Screenshot 2024-07-15 135832.png","./images/dir1/Screenshot 2024-07-15 135842.png","./images/dir1/Screenshot 2024-07-15 140056.png","./images/dir1/Screenshot 2024-07-15 140533.png","./images/dir1/Screenshot 2024-07-15 145808.png","./images/dir2/Screenshot 2024-06-12 004535.png"];
+        function restoreData() {
+            return fetch("http://localhost:8080/")
+                .then((res) => {
+                    if (res.status === 200) {
+                        return res.json(); // Returns a Promise
+                    }
+                    throw new Error("Response status is not 200 OK");
+                })
+                .then((data) => {
+                    // Now 'data' contains the parsed JSON
+                    data = JSON.parse(data);
+                    for (let i in data) {
+                        localStorage.setItem(i, data[i]);
+                    }
+                    alert("data restored successfully")
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error.message);
+                });
+        }
+        function saveData() {
+            return fetch("http://localhost:8080/", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...localStorage,
+                }),
+            })
+                .then((res) => {
+                    if (res.status === 200) {
+                        alert("Saved successfully");
+                    } else {
+                        alert("Not saved for some reason");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error during fetch:", error.message);
+                });
+        }
+        const images = ["./images/0IMG_20230103_163930_306.jpg","./images/IMG_20230103_162804_653.jpg","./images/IMG_20230103_162825_583.jpg","./images/IMG_20230103_162841_827.jpg","./images/IMG_20230103_162857_037.jpg","./images/IMG_20230103_162908_515.jpg","./images/IMG_20230103_162909_461.jpg","./images/IMG_20230103_162917_518.jpg","./images/IMG_20230103_162918_606.jpg","./images/IMG_20230103_162925_131.jpg","./images/IMG_20230103_162929_734.jpg","./images/IMG_20230103_162955_986.jpg","./images/IMG_20230103_163030_180.jpg","./images/IMG_20230103_163056_477.jpg","./images/IMG_20230103_163057_610.jpg","./images/IMG_20230103_163058_565.jpg","./images/IMG_20230103_163115_468.jpg","./images/IMG_20230103_163120_211.jpg","./images/IMG_20230103_163121_273.jpg","./images/IMG_20230103_163122_303.jpg","./images/IMG_20230103_163153_880.jpg","./images/IMG_20230103_163330_478.jpg","./images/IMG_20230103_163334_308.jpg","./images/IMG_20230103_163336_517.jpg","./images/IMG_20230103_163341_160.jpg","./images/IMG_20230103_163347_742.jpg","./images/IMG_20230103_163357_963.jpg","./images/IMG_20230103_163401_249.jpg","./images/IMG_20230103_163449_870.jpg","./images/IMG_20230103_163550_134.jpg","./images/IMG_20230103_163555_278.jpg","./images/IMG_20230103_163634_947.jpg","./images/IMG_20230103_163700_738.jpg","./images/IMG_20230103_163703_141.jpg","./images/IMG_20230103_163725_439.jpg","./images/IMG_20230103_163727_752.jpg","./images/IMG_20230103_163818_333.jpg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_211298.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2176.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2188.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2189.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2190.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2191.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2192.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2193.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2194.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2195.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2196.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2197.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2198.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2199.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2200.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2205.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2206.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2207.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2208.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2210.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2212.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2214.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2215.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2216.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2217.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2218.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2219.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2220.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2221.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2222.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2223.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2224.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2225.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2226.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2227.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2228.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2229.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2230.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2231.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2232.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2233.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2234.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2235.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2236.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2237.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2238.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2239.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2240.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2241.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2242.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2243.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2244.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2245.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2246.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2247.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2248.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2249.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2250.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2251.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2252.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2253.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2254.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2255.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2256.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2257.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2258.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2260.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2261.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2262.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2263.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2264.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2265.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2266.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2267.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2268.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2269.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2270.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2271.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2272.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2273.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2274.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2275.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2276.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2277.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2278.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2279.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2280.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2281.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2282.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2283.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2284.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2285.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2286.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2287.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2288.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2289.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2290.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2291.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2292.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2293.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2294.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2295.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2296.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2297.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2298.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2299.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2300.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2301.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2304.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2305.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2307.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2308.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2309.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2310.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2311.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2312.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2313.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2314.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2315.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2316.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2318.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2319.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2320.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2321.jpeg","./images/FD0DB479-F651-408B-ABE5-CF5F25BEF978-export/IMG_2322.jpeg"];
         const takenAlready = { length: 0, insert: function (...data) { for (let i of data) { this.length++; this[i] = true; } }, retake: function (qNum) { this.length--; delete this[qNum]; } };
         const favor = {
             items: [],
@@ -169,23 +214,37 @@
             else if (e.code === "KeyF") {
                 let i = favor.loopNavigation();
                 if (i >= 0)
-                    img.src = images[num];
+                    img.src = images[i];
                 document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
                 return;
             }
-            else if(e.code === "KeyT" && e.altKey){
+            else if (e.code === "KeyT" && e.altKey) {
                 localStorage.clear();
                 location.reload();
             }
-            else if(e.code === "Slash" && e.shiftKey){
-                alert("image path is: "+images[num]);
+            else if (e.code === "Slash" && e.shiftKey) {
+                alert("image path is: " + images[num]);
+            } else if (e.code === "KeyS" && e.shiftKey) {
+                saveData();
+            }
+            else if (e.code === "KeyR" && e.shiftKey) {
+                restoreData().then(() => {
+                    location.reload();
+                });
+            }
+            else if (e.code === "Digit1" && e.shiftKey) {
+                alert(alertTxt);
             }
             if (!isNaN(num)) {
                 document.querySelector(".number").textContent = `RAND:${takenAlready.length}/${itemLength} | image#${num}`;
                 localStorage.lastImage = num;
-                
             }
         });
+        window.addEventListener("beforeunload",async(ev)=>{
+            ev.preventDefault();
+            await saveData();
+            window.close();
+        })
     </script>
 </body>
 
