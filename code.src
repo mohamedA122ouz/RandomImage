@@ -18,16 +18,17 @@
             shift + 1:to show alert
             shift + s:to save into harddesk
             shift + r:to restore the old data and refresh this migh be bad if you didn't save last session
+            t: to show already taken images
             `
         let controlAlert = localStorage.controlAlert;
         if (!controlAlert) {
-
             alert(alertTxt);
             localStorage.controlAlert = true;
         }
 
 
     </script>
+    <link href="./qicon.png" rel="icon"/>
 </head>
 
 <body>
@@ -148,6 +149,17 @@
                 console.log(e);
             }
         }
+        function* takenAlreadyPointer(){
+            for(let i in takenAlready){
+                if(i!=="length" && i !== "insert" && i !== "retake"){
+                    yield i;
+                }
+                else{
+                    continue;
+                }
+            }
+        }
+        let alreadySolvedPointer = takenAlreadyPointer();
         /**
          * @param {number} favorite
          */
@@ -218,6 +230,19 @@
                 document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
                 return;
             }
+            else if (e.code === "KeyT") {
+                let i = alreadySolvedPointer.next().value;
+                if (i !== undefined){
+                    img.src = images[i];
+                }
+                else{
+                    alreadySolvedPointer = takenAlreadyPointer();
+                    i = alreadySolvedPointer.next().value;
+                    img.src = images[i];
+                }
+                document.querySelector(".number").textContent = `solved img index:${i} | imageName: ${images[i]}`;
+                return;
+            }
             else if (e.code === "KeyT" && e.altKey) {
                 localStorage.clear();
                 location.reload();
@@ -240,11 +265,12 @@
                 localStorage.lastImage = num;
             }
         });
-        window.addEventListener("beforeunload",async(ev)=>{
-            ev.preventDefault();
-            await saveData();
-            window.close();
-        })
+
+        //window.addEventListener("beforeunload",async(ev)=>{
+        //    ev.preventDefault();
+        //    await saveData();
+        //    window.close();
+        //})
     </script>
 </body>
 
