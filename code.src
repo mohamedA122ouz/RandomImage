@@ -15,10 +15,11 @@
             shift + d: delete the favorite image from favorites
             ALT + t : to reset the program
             shift + ?: shows the image path
-            shift + 1:to show alert
+            shift + 1:to show this alert Txt again
             shift + s:to save into harddesk
             shift + r:to restore the old data and refresh this migh be bad if you didn't save last session
             t: to show already taken images
+            THE IMAGES WILL AUTO SAVED TO STORAGE BUT THE RESTORE WON'T BE AUTOMATIC
             `
         let controlAlert = localStorage.controlAlert;
         if (!controlAlert) {
@@ -28,14 +29,30 @@
 
 
     </script>
-    <link href="./qicon.png" rel="icon"/>
+    <link href="./qicon.png" rel="icon" />
 </head>
 
 <body>
+    <a onclick="run()">extract new images (if exist)</a>
     <img src="" alt="choosed question by pressing right arrow ➡ or c for last image"
         style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
     <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
     <script>
+        let isRestoring = false;
+        function run(){
+            fetch("http://localhost:8080/refresh")
+                .then((res) => {
+                    if (res.status === 200) {
+                        alert("extracted successfully");
+                        window.location.reload();
+                    } else {
+                        alert("extraction when wrong for some reason");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error during fetch:", error.message);
+                });
+        }
         function restoreData() {
             return fetch("http://localhost:8080/")
                 .then((res) => {
@@ -149,12 +166,12 @@
                 console.log(e);
             }
         }
-        function* takenAlreadyPointer(){
-            for(let i in takenAlready){
-                if(i!=="length" && i !== "insert" && i !== "retake"){
+        function* takenAlreadyPointer() {
+            for (let i in takenAlready) {
+                if (i !== "length" && i !== "insert" && i !== "retake") {
                     yield i;
                 }
-                else{
+                else {
                     continue;
                 }
             }
@@ -232,10 +249,10 @@
             }
             else if (e.code === "KeyT") {
                 let i = alreadySolvedPointer.next().value;
-                if (i !== undefined){
+                if (i !== undefined) {
                     img.src = images[i];
                 }
-                else{
+                else {
                     alreadySolvedPointer = takenAlreadyPointer();
                     i = alreadySolvedPointer.next().value;
                     img.src = images[i];
@@ -254,6 +271,7 @@
             }
             else if (e.code === "KeyR" && e.shiftKey) {
                 restoreData().then(() => {
+                    isRestoring = true;
                     location.reload();
                 });
             }
@@ -265,12 +283,13 @@
                 localStorage.lastImage = num;
             }
         });
-
-        //window.addEventListener("beforeunload",async(ev)=>{
-        //    ev.preventDefault();
-        //    await saveData();
-        //    window.close();
-        //})
+        window.addEventListener("beforeunload", async (ev) => {
+            if(!isRestoring){
+                ev.preventDefault();
+                await saveData();
+                window.close();
+            }
+        });
     </script>
 </body>
 
