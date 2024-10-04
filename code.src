@@ -34,8 +34,8 @@
 
 <body>
     <a onclick="run()">extract new images (if exist)</a>
-    <img src="" alt="choosed question by pressing right arrow ➡ or c for last image"
-        style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);width: 90%;">
+    <div class="img" src=""
+    style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);width: 90%;height: 90%;background-repeat: no-repeat;background-position: center;background-size: contain;">choosed question by pressing right arrow ➡ or c for last image </div>
     <div class="number" style="position: fixed;bottom:0;right: 0;margin: 25px;font-size: 2rem;"></div>
     <script>
         
@@ -144,7 +144,7 @@
                 return num;
             }).then(result => { console.log(result); return result; });
         }
-        let img = document.querySelector("img");
+        let img = document.querySelector(".img");
         img.alt = img.alt + ` __NOTICE: you solved ${takenAlready.length} question so you have ${images.length - takenAlready.length} question ready to be solved from total ${images.length} question`
         let retakeQuestionNum = -1;
         function saveToStorage() {
@@ -211,19 +211,22 @@
                 saveToStorage();
                 num = await randomQ();
                 retakeQuestionNum = num;
-                img.src = images[num];
+                img.innerHTML = ``;
+                img.style.backgroundImage = `url("${images[num]}")`;
             }
             else if (e.code === "Delete") {
                 num = await randomQ();
                 takenAlready.retake(retakeQuestionNum);
-                img.src = images[num];
+                img.innerHTML = ``;
+                img.style.backgroundImage = `url("${images[num]}")`;
                 retakeQuestionNum = num;
             }
             else if (e.code === "KeyC") {
                 if (localStorage.lastImage)
                     num = localStorage.lastImage;
                 if (!isNaN(num)) {
-                    img.src = images[num];
+                    img.innerHTML = ``;
+                    img.style.backgroundImage = `url("${images[num]}")`
                     retakeQuestionNum = num;
                 }
                 else {
@@ -243,20 +246,24 @@
             }
             else if (e.code === "KeyF") {
                 let i = favor.loopNavigation();
-                if (i >= 0)
-                    img.src = images[i];
+                if (i >= 0){
+                    img.innerHTML = ``;
+                    img.style.backgroundImage = `url("${images[i]}")`
+                }
                 document.querySelector(".number").textContent = `FAV:${favor.pointer + 1}/${favor.items.length} | image#${favor.items[favor.pointer]}`;
                 return;
             }
             else if (e.code === "KeyT") {
                 let i = alreadySolvedPointer.next().value;
                 if (i !== undefined) {
-                    img.src = images[i];
+                    img.innerHTML = ``;
+                    img.style.backgroundImage = `url("${images[i]}")`
                 }
                 else {
                     alreadySolvedPointer = takenAlreadyPointer();
                     i = alreadySolvedPointer.next().value;
-                    img.src = images[i];
+                    img.innerHTML = ``;
+                    img.style.backgroundImage = `url("${images[i]}")`
                 }
                 document.querySelector(".number").textContent = `solved img index:${i} | imageName: ${images[i]}`;
                 return;
