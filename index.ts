@@ -16,14 +16,14 @@ let defineControllers = new Promise(async function (resolve, reject) {
 });
 app.listen(port, () => {
     console.log("Welcome at your MVC project \nApplication ip is:\nhttp://localhost:", port);
-    exec("start explorer http://localhost:4040", (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("Browser Opened!");
-        }
-    });
+    // exec("start explorer http://localhost:4040", (err) => {
+    //     if (err) {
+    //         console.log(err);
+    //     }
+    //     else {
+    //         console.log("Browser Opened!");
+    //     }
+    // });
 });
 app.get("/", async (req, res) => {
     await defineControllers;
@@ -47,7 +47,7 @@ function html(HTMLPath: string, obj?: any): string {//the function takes the pat
                         }
                     }
                 }
-                else if (obj[propertyName] instanceof Object) {
+                else if (obj[propertyName] instanceof Object) {//how to implement{OuterKey:{innerKey:[...]}} and it replaces using key
                     let counter = 0;
                     for (let innerProperties in obj[propertyName]) {
                         if (0 === counter++) {
@@ -88,7 +88,7 @@ function html(HTMLPath: string, obj?: any): string {//the function takes the pat
                         }
                     }
                     else {
-                        if (caseValue === obj[propertyName]) {
+                        if (caseValue == obj[propertyName]) {
                             choosenElement = temp.replace(`?${caseValue}?`, "");
                             choosenElement = choosenElement.substring(0, choosenElement.length - 1);
                             isFinished = true; break;
@@ -103,7 +103,7 @@ function html(HTMLPath: string, obj?: any): string {//the function takes the pat
                 // HTML = HTML.replace(`~${propertyName}#{${neededElement}}#`, `~!${propertyName}#~`);
             }
             else
-                HTML = HTML.replace(`~${propertyName}`, obj[propertyName]);
+                HTML = HTML.replaceAll(`~${propertyName}`, obj[propertyName]);
         }
     }
     return HTML;
@@ -112,13 +112,15 @@ function html(HTMLPath: string, obj?: any): string {//the function takes the pat
  * @param data if not specified the controller name at the property @ it will giving it the name of the view which should be the same as controller name 
  * @param HTMLPath the view must be with the same name of controller else you must specify the name of controller at property @ [@] = "controller name"
 */
-export default function eHtml(HTMLPath: string, data?: any): string {
+export default function eHtml(HTMLPath: string, data?: any): string {//controllerName.viewName.extention
     data = data === undefined || data === null ? {} : data;
+    let viewName:string = HTMLPath.substring(HTMLPath.lastIndexOf("/"), HTMLPath.lastIndexOf("."));
     if (data["@"] === undefined) {
-        data["@"] = HTMLPath.substring(HTMLPath.lastIndexOf("/"), HTMLPath.lastIndexOf("."));
+        let controllerName:string = viewName.split('.')[0];
+        data["@"] = controllerName;
     }
     if (data["title"] === undefined) {
-        data["title"] = HTMLPath.substring(HTMLPath.lastIndexOf("/") + 1, HTMLPath.lastIndexOf("."));
+        data["title"] = viewName.split('.')[1];
     }
     return html(HTMLPath, data);
 }

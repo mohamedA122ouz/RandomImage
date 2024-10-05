@@ -1,10 +1,9 @@
 import subjectData from "./subjectData";
+import subjectsDetails from "./subjectDetails";
 
-interface Subjects{
-    info:{
-        name:string;
-        path:string;
-        subjectData:subjectData;
-    }[];
+
+interface Subjects {
+    indexing: string[];
+    [key: string]: subjectsDetails|string[];
 }
 export default Subjects;
