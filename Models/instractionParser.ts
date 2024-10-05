@@ -1,6 +1,7 @@
 import virtualImage from "./virtualImage";
-
-export default function instractionParser(fatherDirctory:string,instraction: string) {
+import fs from "fs";
+export default function instractionParser(fatherDirctory:string):virtualImage[] {
+    let instraction = fs.readFileSync(fatherDirctory,"utf8");
     let instractionsArr: string[] = instraction.split(';');
     const imageArr: virtualImage[] = [];
     for (let i in instractionsArr) {
@@ -10,8 +11,10 @@ export default function instractionParser(fatherDirctory:string,instraction: str
             let temp: virtualImage = { text: "", path: "" };
             temp.text = instractionsArr[i].substring(instractionsArr[i].indexOf('$'), instractionsArr[i].length).replace("-", "to");
             temp.path = fatherDirctory+i+".vimg";//vimg standsFor virtual image
+            imageArr.push(temp);
         }
     }
+    return imageArr;
 }
 //instraction exmple
 //startImageNumber-finalImageNumber$startPageNumber-finalPageNumber$Message;
